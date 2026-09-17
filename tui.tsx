@@ -207,6 +207,7 @@ export default Plugin.define({
       render: () => {
         ctx.keymap.layer(() => ({
           mode: "global",
+          priority: 20,
           commands: [
             {
               id: "mini-session.open",
@@ -218,6 +219,24 @@ export default Plugin.define({
               slash: { name: "side", arguments: true },
               enabled: () => Boolean(currentSessionID()),
               run: (input) => openSidechat(input),
+            },
+            {
+              id: "mini-session.focus-main",
+              title: "Focus main chat",
+              description: "Close the side panel without discarding its temporary chat",
+              group: "Side chat",
+              bind: "<leader>left",
+              enabled: () => Boolean(currentSessionID()),
+              run: () => ctx.ui.panel.close(),
+            },
+            {
+              id: "mini-session.focus-side",
+              title: "Focus side chat",
+              description: "Open the temporary side-chat panel",
+              group: "Side chat",
+              bind: "<leader>right",
+              enabled: () => Boolean(currentSessionID()),
+              run: () => openSidechat(),
             },
             {
               id: "mini-session.open-alias",
@@ -412,7 +431,7 @@ function SidechatPanel(props: {
   return (
     <box flexDirection="column" width="100%" height="100%" padding={1}>
       <text height={2} fg={context.theme.text.default} wrapMode="word">
-        {"◇ Side chat\nAlt+Enter send to main + close"}
+        {"◇ Side chat\nCtrl+X Left main · Ctrl+X Right side · Alt+Enter send + close"}
       </text>
 
       <scrollbox flexGrow={1} stickyScroll stickyStart="bottom" paddingRight={1}>
